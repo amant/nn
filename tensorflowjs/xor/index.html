@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XOR Tensorflow JS</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+</head>
+<body>
+  <script>
+    // Create the model
+    const model = tf.sequential();
+    model.add(tf.layers.dense({units: 8, inputShape: [2], activation: 'tanh'}));
+    model.add(tf.layers.dense({units: 1, activation: 'sigmoid'}));
+
+    // Compile the model
+    model.compile({loss: 'meanSquaredError', optimizer: 'sgd'});
+
+    // Define training data (XOR inputs)
+    const xs = tf.tensor2d([[0, 0], [0, 1], [1, 0], [1, 1]]);
+    // Define target data (XOR outputs)
+    const ys = tf.tensor2d([[0], [1], [1], [0]]);
+
+    // Train the model
+    (async function() {
+      for (let i = 0; i < 500; i++) {
+        const response = await model.fit(xs, ys, {epochs: 1000});
+        console.log(`Iteration: ${i}, Loss: ${response.history.loss[0]}`);
+      }
+
+      let result = model.predict(xs);
+      result.print();
+    })();
+  </script>
+</body>
+</html>
